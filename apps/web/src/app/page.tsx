@@ -150,6 +150,9 @@ export default async function Home() {
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-600">
               {versionLabel}
             </span>
+            <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-700">
+              WIP · Bug fixing in progress
+            </span>
             <Link
               href="https://www.hirahul.xyz"
               target="_blank"
@@ -169,6 +172,15 @@ export default async function Home() {
               Engineer. The website is only the download and overview page. The
               real localhost inspection and terminate actions live in the app
               running on your machine.
+            </p>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+            <p className="text-sm font-semibold">Current status</p>
+            <p className="mt-2 text-sm leading-6 text-amber-900/90">
+              This alpha build is a work in progress and is currently under active
+              bug fixing. The latest desktop build may still be unstable on some
+              Macs while startup and packaging issues are being ironed out.
             </p>
           </div>
 
@@ -275,9 +287,9 @@ export default async function Home() {
               What to expect
             </h2>
             <p className="mt-4 text-sm leading-6 text-slate-600 text-pretty">
-              This is currently an unsigned alpha build, so macOS may show a
-              Gatekeeper warning on first open until Apple signing is added in a
-              later release.
+              This is currently an unsigned alpha build and also a work in
+              progress. Expect occasional bugs while startup and packaging issues
+              are being fixed.
             </p>
             <p className="mt-4 text-sm leading-6 text-slate-600 text-pretty">
               For local development, use `npm run desktop:dev` from the workspace

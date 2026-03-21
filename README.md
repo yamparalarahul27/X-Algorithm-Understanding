@@ -1,5 +1,7 @@
 # Localhost Status
 
+Status: `WIP` and under active bug fixing. The current alpha desktop build may still be unstable while startup and packaging issues are being resolved.
+
 Localhost Status is now split into two separate codebases inside one workspace:
 
 - `apps/web`: a hosted landing page that only offers Mac app downloads

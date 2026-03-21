@@ -9,6 +9,14 @@ const path = require("node:path");
 let mainWindow = null;
 let serverProcess = null;
 let quitting = false;
+let appUrlPromise = null;
+let createMainWindowPromise = null;
+
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
+
+if (!hasSingleInstanceLock) {
+  app.quit();
+}
 
 function getDevIconPath() {
   return path.join(app.getAppPath(), "build", "icon.png");
@@ -242,7 +250,14 @@ async function getAppUrl() {
     return process.env.ELECTRON_RENDERER_URL;
   }
 
-  return startBundledNextServer();
+  if (!appUrlPromise) {
+    appUrlPromise = startBundledNextServer().catch((error) => {
+      appUrlPromise = null;
+      throw error;
+    });
+  }
+
+  return appUrlPromise;
 }
 
 async function createMainWindow() {
@@ -285,6 +300,21 @@ async function createMainWindow() {
   });
 
   await mainWindow.loadURL(url);
+  return mainWindow;
+}
+
+async function ensureMainWindow() {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    return mainWindow;
+  }
+
+  if (!createMainWindowPromise) {
+    createMainWindowPromise = createMainWindow().finally(() => {
+      createMainWindowPromise = null;
+    });
+  }
+
+  return createMainWindowPromise;
 }
 
 function stopBundledServer() {
@@ -294,9 +324,32 @@ function stopBundledServer() {
 
   serverProcess.kill("SIGTERM");
   serverProcess = null;
+  appUrlPromise = null;
 }
 
 app.setName("Localhost Status");
+
+app.on("second-instance", async () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+
+    mainWindow.show();
+    mainWindow.focus();
+    return;
+  }
+
+  try {
+    const window = await ensureMainWindow();
+    window?.show();
+    window?.focus();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unable to reopen the desktop app.";
+    dialog.showErrorBox("Localhost Status", message);
+  }
+});
 
 app.whenReady().then(async () => {
   try {
@@ -310,7 +363,7 @@ app.whenReady().then(async () => {
     });
     applyDockIcon();
     createApplicationMenu();
-    await createMainWindow();
+    await ensureMainWindow();
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to start the desktop app.";
@@ -333,11 +386,14 @@ app.on("window-all-closed", () => {
 app.on("activate", async () => {
   if (BrowserWindow.getAllWindows().length > 0) {
     mainWindow?.show();
+    mainWindow?.focus();
     return;
   }
 
   try {
-    await createMainWindow();
+    const window = await ensureMainWindow();
+    window?.show();
+    window?.focus();
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to reopen the desktop app.";

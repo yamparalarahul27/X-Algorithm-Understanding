@@ -220,6 +220,7 @@ async function startBundledNextServer() {
     cwd: path.dirname(serverEntry),
     env: {
       ...process.env,
+      ELECTRON_RUN_AS_NODE: "1",
       HOSTNAME: "127.0.0.1",
       NODE_ENV: "production",
       NEXT_TELEMETRY_DISABLED: "1",

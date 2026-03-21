@@ -10,6 +10,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-sky-500 text-white hover:bg-sky-400",
         secondary: "border border-slate-300 bg-white text-slate-800 hover:border-slate-400",
+        danger: "bg-rose-600 text-white hover:bg-rose-500 focus-visible:ring-rose-200",
         ghost: "text-slate-700 hover:bg-slate-100",
       },
       size: {

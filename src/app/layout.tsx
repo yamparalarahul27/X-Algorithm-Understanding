@@ -14,8 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "API_Testing",
-  description: "API Testing console for FMP and Coinbase",
+  metadataBase: new URL("http://localhost:3001"),
+  title: "Localhost Status",
+  description:
+    "A local dashboard for viewing listening localhost servers and terminating them safely.",
+  applicationName: "Localhost Status",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Localhost Status",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         {children}
         {process.env.NODE_ENV === "development" && <Agentation />}

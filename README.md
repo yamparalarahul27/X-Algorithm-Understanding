@@ -1,25 +1,40 @@
-## API Testing (FMP Crypto)
+# Localhost Status
 
-A small Next.js + Tailwind app to exercise Financial Modeling Prep free crypto endpoints via a server-side proxy.
+Localhost Status is a browser-based local app for seeing which processes are listening on TCP ports on your machine, spotting likely dev servers quickly, and terminating a process without leaving the browser.
 
-### Setup
-1) Install deps (already done if you used the scaffold):
+## What it does
+
+- Lists listening TCP processes using `lsof` and `ps`
+- Highlights likely web and app servers first
+- Shows ports, exposure, process ids, and command lines
+- Lets you terminate a process with a confirmation dialog
+- Refreshes automatically so the dashboard stays current
+
+## Requirements
+
+- macOS or Linux with `lsof` and `ps` available
+- Node.js 20+
+
+Windows is not supported in the current implementation.
+
+## Run locally
+
 ```bash
 npm install
-```
-
-2) Add your FMP API key:
-```
-echo "FMP_API_KEY=your_key_here" > .env.local
-```
-
-### Run
-```bash
 npm run dev
 ```
-Visit http://localhost:3000 and choose an endpoint (list, quote, batch, historical, intraday) and symbol (e.g., BTCUSD). The UI calls `/api/fmp`, which proxies to FMP with your server-side key.
 
-### Notes
-- Endpoints covered: list, full/short quote, batch quotes, EOD light, intraday (1m/5m/1h).
-- Keep your API key server-side; do not expose it in the browser.
-- Responses render raw JSON for inspection.
+Open [http://localhost:3001](http://localhost:3001).
+
+For a production-style local run:
+
+```bash
+npm run build
+npm run start
+```
+
+## Safety notes
+
+- Terminate sends `SIGTERM` to the selected process.
+- The app refuses to terminate its own Next.js process.
+- This dashboard is meant to run on your local machine. Do not expose it publicly.

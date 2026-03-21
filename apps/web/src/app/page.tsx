@@ -1,6 +1,15 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 
+const DEFAULT_SITE_URL = "https://localhost.hirahul.xyz";
+const DEFAULT_REPO_URL = "https://github.com/yamparalarahul27/localhost-status";
+const DEFAULT_RELEASE_URL =
+  "https://github.com/yamparalarahul27/localhost-status/releases/tag/v0.1.0-alpha";
+const DEFAULT_DMG_URL =
+  "https://github.com/yamparalarahul27/localhost-status/releases/download/v0.1.0-alpha/Localhost.Status-0.1.0-arm64-mac.dmg";
+const DEFAULT_ZIP_URL =
+  "https://github.com/yamparalarahul27/localhost-status/releases/download/v0.1.0-alpha/Localhost.Status-0.1.0-arm64-mac.zip";
+
 function detectPlatform(userAgent: string) {
   const signature = userAgent.toLowerCase();
 
@@ -99,15 +108,16 @@ export default async function Home() {
   const siteUrl =
     process.env.NEXT_PUBLIC_APP_SITE_URL ??
     process.env.APP_SITE_URL ??
-    "https://localhost.hirahul.xyz";
-  const downloadUrl = process.env.MAC_APP_DOWNLOAD_URL ?? null;
-  const zipUrl = process.env.MAC_APP_ZIP_URL ?? null;
+    DEFAULT_SITE_URL;
+  const downloadUrl = process.env.MAC_APP_DOWNLOAD_URL ?? DEFAULT_DMG_URL;
+  const zipUrl = process.env.MAC_APP_ZIP_URL ?? DEFAULT_ZIP_URL;
   const releaseUrl =
     process.env.MAC_APP_RELEASE_URL ??
     deriveReleaseUrl(downloadUrl) ??
-    deriveReleaseUrl(zipUrl);
+    deriveReleaseUrl(zipUrl) ??
+    DEFAULT_RELEASE_URL;
   const versionLabel = process.env.MAC_APP_VERSION ?? "Alpha 0.1v";
-  const repoUrl = "https://github.com/yamparalarahul27/localhost-status";
+  const repoUrl = DEFAULT_REPO_URL;
   const prefersDmg = platform === "mac";
   const primaryDownloadUrl = prefersDmg ? downloadUrl : zipUrl ?? downloadUrl;
   const secondaryDownloadUrl = prefersDmg ? zipUrl : downloadUrl;

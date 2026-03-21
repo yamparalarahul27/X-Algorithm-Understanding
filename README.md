@@ -48,8 +48,8 @@ The web app is intentionally only a landing page now.
 Set these environment variables for the hosted site:
 
 - `APP_SITE_URL` optional, defaults to `https://localhost.hirahul.xyz`
-- `MAC_APP_DOWNLOAD_URL`
-- `MAC_APP_ZIP_URL` optional
+- `MAC_APP_DOWNLOAD_URL` optional, defaults to the current GitHub release DMG
+- `MAC_APP_ZIP_URL` optional, defaults to the current GitHub release ZIP
 - `MAC_APP_RELEASE_URL` optional, auto-derived from GitHub download URLs when possible
 - `MAC_APP_VERSION` optional
 

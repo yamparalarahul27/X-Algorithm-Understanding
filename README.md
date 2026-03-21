@@ -15,6 +15,9 @@ From the repo root:
 npm install
 ```
 
+`npm run build` is the deploy-safe hosted-web build.
+Use `npm run build:all` when you want to validate both the landing page and the desktop app web bundle together.
+
 ### Landing page
 
 ```bash

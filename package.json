@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "lint": "npm run lint --workspaces --if-present",
-    "build": "npm run web:build && npm run desktop:web:build",
+    "build": "npm run web:build",
+    "build:all": "npm run web:build && npm run desktop:web:build",
     "web:dev": "npm run dev --workspace @localhost-status/web",
     "web:build": "npm run build --workspace @localhost-status/web",
     "web:start": "npm run start --workspace @localhost-status/web",

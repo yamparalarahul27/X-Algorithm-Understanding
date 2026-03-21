@@ -27,6 +27,33 @@ function detectPlatform(userAgent: string) {
   return "unknown";
 }
 
+function deriveReleaseUrl(downloadHref: string | null) {
+  if (!downloadHref) {
+    return null;
+  }
+
+  try {
+    const url = new URL(downloadHref);
+
+    if (url.hostname !== "github.com") {
+      return null;
+    }
+
+    const match = url.pathname.match(
+      /^\/([^/]+)\/([^/]+)\/releases\/download\/([^/]+)\/[^/]+$/,
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const [, owner, repo, tag] = match;
+    return `https://github.com/${owner}/${repo}/releases/tag/${tag}`;
+  } catch {
+    return null;
+  }
+}
+
 function DownloadButton({
   href,
   children,
@@ -69,9 +96,18 @@ export default async function Home() {
   const headerStore = await headers();
   const userAgent = headerStore.get("user-agent") ?? "";
   const platform = detectPlatform(userAgent);
+  const siteUrl =
+    process.env.NEXT_PUBLIC_APP_SITE_URL ??
+    process.env.APP_SITE_URL ??
+    "https://localhost.hirahul.xyz";
   const downloadUrl = process.env.MAC_APP_DOWNLOAD_URL ?? null;
   const zipUrl = process.env.MAC_APP_ZIP_URL ?? null;
+  const releaseUrl =
+    process.env.MAC_APP_RELEASE_URL ??
+    deriveReleaseUrl(downloadUrl) ??
+    deriveReleaseUrl(zipUrl);
   const versionLabel = process.env.MAC_APP_VERSION ?? "Alpha 0.1v";
+  const repoUrl = "https://github.com/yamparalarahul27/localhost-status";
   const prefersDmg = platform === "mac";
   const primaryDownloadUrl = prefersDmg ? downloadUrl : zipUrl ?? downloadUrl;
   const secondaryDownloadUrl = prefersDmg ? zipUrl : downloadUrl;
@@ -146,6 +182,55 @@ export default async function Home() {
           <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-500 text-pretty">
             {compatibilityNote}
           </p>
+
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-sm font-semibold text-slate-900">Public links</p>
+            <div className="mt-3 flex flex-wrap gap-3 text-sm">
+              <Link
+                href={siteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-950"
+              >
+                Site URL
+              </Link>
+              {releaseUrl ? (
+                <Link
+                  href={releaseUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-950"
+                >
+                  Public release
+                </Link>
+              ) : null}
+              <Link
+                href={repoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-slate-700 transition-colors hover:border-slate-400 hover:text-slate-950"
+              >
+                GitHub repo
+              </Link>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Hosted at{" "}
+              <span className="font-mono text-[13px] text-slate-800">
+                {siteUrl}
+              </span>
+              {releaseUrl ? (
+                <>
+                  {" "}with the app release published at{" "}
+                  <span className="font-mono text-[13px] text-slate-800">
+                    {releaseUrl}
+                  </span>
+                  .
+                </>
+              ) : (
+                "."
+              )}
+            </p>
+          </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             <InfoCard

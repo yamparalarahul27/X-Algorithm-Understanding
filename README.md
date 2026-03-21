@@ -1,40 +1,56 @@
 # Localhost Status
 
-Localhost Status is a browser-based local app for seeing which processes are listening on TCP ports on your machine, spotting likely dev servers quickly, and terminating a process without leaving the browser.
+Localhost Status is now split into two separate codebases inside one workspace:
 
-## What it does
+- `apps/web`: a hosted landing page that only offers Mac app downloads
+- `apps/desktop`: the real macOS app and local dashboard for listing localhost listeners and terminating them
 
-- Lists listening TCP processes using `lsof` and `ps`
-- Highlights likely web and app servers first
-- Shows ports, exposure, process ids, and command lines
-- Lets you terminate a process with a confirmation dialog
-- Refreshes automatically so the dashboard stays current
+This keeps hosted-web concerns separate from local-machine functionality.
 
-## Requirements
+## Workspace commands
 
-- macOS or Linux with `lsof` and `ps` available
-- Node.js 20+
-
-Windows is not supported in the current implementation.
-
-## Run locally
+From the repo root:
 
 ```bash
 npm install
-npm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001).
-
-For a production-style local run:
+### Landing page
 
 ```bash
-npm run build
-npm run start
+npm run web:dev
+npm run web:build
 ```
 
-## Safety notes
+### Mac app
 
-- Terminate sends `SIGTERM` to the selected process.
-- The app refuses to terminate its own Next.js process.
-- This dashboard is meant to run on your local machine. Do not expose it publicly.
+```bash
+npm run desktop:dev
+npm run desktop:build
+```
+
+`desktop:build` creates the packaged macOS app artifacts.
+
+## Desktop app highlights
+
+- The Mac app remembers your view mode, refresh cadence, and listener category filters on your machine.
+- It includes a first-run guide that explains what the app can inspect and what it will not terminate.
+- Process shutdown uses `SIGTERM` first and only offers force kill if the process refuses to stop.
+- The desktop packaging flow now builds a Mac icon set and branded `.dmg` and `.zip` artifacts.
+
+## Hosted landing page
+
+The web app is intentionally only a landing page now.
+
+Set these environment variables for the hosted site:
+
+- `APP_SITE_URL` optional, defaults to `https://localhost.hirahul.xyz`
+- `MAC_APP_DOWNLOAD_URL`
+- `MAC_APP_ZIP_URL` optional
+- `MAC_APP_VERSION` optional
+
+## macOS app notes
+
+- Building and local use do not require publishing through Apple.
+- Clean public distribution usually means Apple Developer Program membership for code signing and notarization.
+- Before any GitHub push, we will stop and review whether all requirements are done.

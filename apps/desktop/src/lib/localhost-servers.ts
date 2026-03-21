@@ -8,6 +8,7 @@ import type {
   LocalServerProcess,
   ServerCategory,
   ServerSnapshot,
+  TerminationSignal,
   TerminateServerResult,
 } from "@/lib/localhost-types";
 
@@ -421,6 +422,7 @@ function sleep(milliseconds: number) {
 
 export async function terminateLocalhostServer(
   pid: number,
+  signal: TerminationSignal = "SIGTERM",
 ): Promise<TerminateServerResult> {
   if (!Number.isInteger(pid) || pid <= 0) {
     throw new LocalhostServerError("A valid process id is required.", 400);
@@ -436,14 +438,14 @@ export async function terminateLocalhostServer(
   if (!isProcessAlive(pid)) {
     return {
       pid,
-      signal: "SIGTERM",
+      signal,
       terminated: true,
       message: "The process has already stopped.",
     };
   }
 
   try {
-    process.kill(pid, "SIGTERM");
+    process.kill(pid, signal);
   } catch (error) {
     if (
       typeof error === "object" &&
@@ -462,15 +464,20 @@ export async function terminateLocalhostServer(
     throw new LocalhostServerError(message, 500);
   }
 
-  await sleep(500);
+  await sleep(signal === "SIGKILL" ? 200 : 500);
   const terminated = !isProcessAlive(pid);
 
   return {
     pid,
-    signal: "SIGTERM",
+    signal,
     terminated,
-    message: terminated
-      ? "Process terminated."
-      : "SIGTERM sent. The process is still running.",
+    message:
+      signal === "SIGKILL"
+        ? terminated
+          ? "Process force killed."
+          : "SIGKILL sent. The process is still running."
+        : terminated
+          ? "Process terminated."
+          : "SIGTERM sent. The process is still running.",
   };
 }

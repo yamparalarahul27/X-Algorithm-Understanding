@@ -1,5 +1,6 @@
 export type ListenerExposure = "loopback" | "all-interfaces" | "network";
 export type ServerCategory = "web" | "tooling" | "desktop" | "system";
+export type TerminationSignal = "SIGTERM" | "SIGKILL";
 
 export interface LocalListener {
   id: string;
@@ -34,7 +35,7 @@ export interface ServerSnapshot {
 
 export interface TerminateServerResult {
   pid: number;
-  signal: "SIGTERM";
+  signal: TerminationSignal;
   terminated: boolean;
   message: string;
 }

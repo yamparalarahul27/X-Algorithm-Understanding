@@ -3,12 +3,13 @@ import {
   LocalhostServerError,
   terminateLocalhostServer,
 } from "@/lib/localhost-servers";
+import type { TerminationSignal } from "@/lib/localhost-types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ pid: string }> },
 ) {
   const { pid } = await context.params;
@@ -21,8 +22,38 @@ export async function POST(
     );
   }
 
+  let signal: TerminationSignal = "SIGTERM";
+  const rawBody = await request.text();
+
+  if (rawBody) {
+    let parsedBody: unknown;
+
+    try {
+      parsedBody = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json(
+        { error: "The terminate request body must be valid JSON." },
+        { status: 400 },
+      );
+    }
+
+    if (
+      typeof parsedBody !== "object" ||
+      parsedBody === null ||
+      !("signal" in parsedBody) ||
+      (parsedBody.signal !== "SIGTERM" && parsedBody.signal !== "SIGKILL")
+    ) {
+      return NextResponse.json(
+        { error: "The terminate signal must be SIGTERM or SIGKILL." },
+        { status: 400 },
+      );
+    }
+
+    signal = parsedBody.signal;
+  }
+
   try {
-    const result = await terminateLocalhostServer(parsedPid);
+    const result = await terminateLocalhostServer(parsedPid, signal);
 
     return NextResponse.json(result, {
       status: result.terminated ? 200 : 202,

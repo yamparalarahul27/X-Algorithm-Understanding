@@ -14,17 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3001"),
+  metadataBase: new URL("http://localhost:3002"),
   title: "Localhost Status",
   description:
     "A local dashboard for viewing listening localhost servers and terminating them safely.",
   applicationName: "Localhost Status",
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Localhost Status",
-  },
 };
 
 export default function RootLayout({

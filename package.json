@@ -1,34 +1,19 @@
 {
-  "name": "localhost-status",
-  "version": "0.1.0",
+  "name": "localhost-status-workspace",
   "private": true,
-  "description": "A local dashboard for viewing and terminating listening localhost servers.",
+  "workspaces": [
+    "apps/web",
+    "apps/desktop"
+  ],
   "scripts": {
-    "dev": "next dev -p 3001",
-    "build": "next build",
-    "start": "next start -p 3001",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@radix-ui/react-alert-dialog": "^1.1.15",
-    "@radix-ui/react-slot": "^1.2.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "next": "^16.2.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "tailwind-merge": "^3.4.1"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "agentation": "^2.2.1",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "^16.2.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "lint": "npm run lint --workspaces --if-present",
+    "build": "npm run web:build && npm run desktop:web:build",
+    "web:dev": "npm run dev --workspace @localhost-status/web",
+    "web:build": "npm run build --workspace @localhost-status/web",
+    "web:start": "npm run start --workspace @localhost-status/web",
+    "desktop:web:build": "npm run build:web --workspace @localhost-status/desktop",
+    "desktop:dev": "npm run desktop:dev --workspace @localhost-status/desktop",
+    "desktop:preview": "npm run desktop:preview --workspace @localhost-status/desktop",
+    "desktop:build": "npm run desktop:package --workspace @localhost-status/desktop"
   }
 }

@@ -1,0 +1,6 @@
+[package]
+name = "candidate-pipeline"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Composable framework for candidate sourcing, hydration, filtering, scoring, and selection."

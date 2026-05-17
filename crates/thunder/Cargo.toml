@@ -1,0 +1,9 @@
+[package]
+name = "thunder"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "In-memory store of recent in-network posts for sub-millisecond lookups."
+
+[dependencies]
+candidate-pipeline = { workspace = true }

@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/candidate-pipeline",
+    "crates/thunder",
+    "crates/home-mixer",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/yamparalarahul27/test-localhost-electron-app"
+
+[workspace.dependencies]
+candidate-pipeline = { path = "crates/candidate-pipeline" }
+thunder = { path = "crates/thunder" }

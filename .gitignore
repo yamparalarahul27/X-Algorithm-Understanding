@@ -1,52 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Rust
+/target/
+**/*.rs.bk
+Cargo.lock.bak
 
-# dependencies
-/node_modules
-/apps/*/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/dist/
-/apps/*/.next/
-/apps/*/out/
-
-# production
-/build/
-/apps/*/build
-!/apps/desktop/build/
-!/apps/desktop/build/icon.png
-!/apps/desktop/build/icon.svg
-/apps/desktop/build/icon.icns
-/apps/desktop/build/icon.iconset/
-/apps/*/dist
-
-# misc
+# Editors / OS
 .DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-apps/*/next-env.d.ts
+.idea/
+.vscode/
+*.swp

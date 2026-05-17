@@ -1,0 +1,14 @@
+[package]
+name = "home-mixer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Orchestration layer that runs the candidate pipeline for the For You feed."
+
+[[bin]]
+name = "home-mixer"
+path = "src/main.rs"
+
+[dependencies]
+candidate-pipeline = { workspace = true }
+thunder = { workspace = true }

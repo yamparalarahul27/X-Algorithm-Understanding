@@ -1,62 +1,63 @@
-# Localhost Status
+# forya
 
-Status: `WIP` and under active bug fixing. The current alpha desktop build may still be unstable while startup and packaging issues are being resolved.
+A scaffold of a Twitter/X-style "For You" recommendation system, modeled
+after the structure of [`xai-org/x-algorithm`][upstream]. The previous
+Electron localhost-status app has been replaced with this codebase.
 
-Localhost Status is now split into two separate codebases inside one workspace:
+[upstream]: https://github.com/xai-org/x-algorithm
 
-- `apps/web`: a hosted landing page that only offers Mac app downloads
-- `apps/desktop`: the real macOS app and local dashboard for listing localhost listeners and terminating them
+## Layout
 
-This keeps hosted-web concerns separate from local-machine functionality.
-
-## Workspace commands
-
-From the repo root:
-
-```bash
-npm install
+```
+crates/
+  candidate-pipeline/  # Composable traits: source, hydrator, filter, scorer, selector
+  thunder/             # In-memory store of recent in-network posts
+  home-mixer/          # Orchestrator binary that runs the pipeline
+phoenix/               # Python ML package: two-tower retrieval + transformer ranker
 ```
 
-`npm run build` is the deploy-safe hosted-web build.
-Use `npm run build:all` when you want to validate both the landing page and the desktop app web bundle together.
+| Module                | Role                                                                                 | Language |
+| --------------------- | ------------------------------------------------------------------------------------ | -------- |
+| `home-mixer`          | Drives the full pipeline (hydrate -> source -> enrich -> filter -> score -> select). | Rust     |
+| `thunder`             | Holds recent posts from followed authors for sub-ms in-network lookups.              | Rust     |
+| `candidate-pipeline`  | Reusable trait framework; everything else plugs into these traits.                   | Rust     |
+| `phoenix.retrieval`   | Two-tower model that surfaces out-of-network candidates.                             | Python   |
+| `phoenix.ranking`     | Grok-derived transformer that predicts per-engagement probabilities.                 | Python   |
 
-### Landing page
+This is a **scaffold**, not a production system. The Rust side has no
+external dependencies and the Python side runs on the standard library so
+the project builds and runs anywhere with `cargo` and `python3`. The ML
+code is a deterministic stub - install `phoenix[ml]` and replace the stubs
+to wire in real numpy/torch.
 
-```bash
-npm run web:dev
-npm run web:build
+## Running
+
+Rust orchestrator:
+
+```sh
+cargo run -p home-mixer
 ```
 
-### Mac app
+Python retrieval + ranking demo:
 
-```bash
-npm run desktop:dev
-npm run desktop:build
+```sh
+PYTHONPATH=phoenix/src python3 -m phoenix.cli
+# or, after `pip install -e ./phoenix`:
+phoenix-demo
 ```
 
-`desktop:build` creates the packaged macOS app artifacts.
+## Pipeline shape
 
-## Desktop app highlights
+1. **Hydrate query** - user id, engagement history, locale.
+2. **Source candidates** - Thunder (in-network) + Phoenix retrieval (out-of-network).
+3. **Hydrate candidates** - attach author affinity, age, etc.
+4. **Filter** - drop old posts, duplicates, blocked content.
+5. **Score** - Phoenix transformer emits per-engagement probabilities, blended into one relevance score.
+6. **Select** - top-K by score.
 
-- The Mac app remembers your view mode, refresh cadence, and listener category filters on your machine.
-- It includes a first-run guide that explains what the app can inspect and what it will not terminate.
-- Process shutdown uses `SIGTERM` first and only offers force kill if the process refuses to stop.
-- The desktop packaging flow now builds a Mac icon set and branded `.dmg` and `.zip` artifacts.
+Candidates are scored in isolation - a scorer cannot consult other
+candidates - which keeps the pipeline cacheable and trivially parallel.
 
-## Hosted landing page
+## License
 
-The web app is intentionally only a landing page now.
-
-Set these environment variables for the hosted site:
-
-- `APP_SITE_URL` optional, defaults to `https://localhost.hirahul.xyz`
-- `MAC_APP_DOWNLOAD_URL` optional, defaults to the current GitHub release DMG
-- `MAC_APP_ZIP_URL` optional, defaults to the current GitHub release ZIP
-- `MAC_APP_RELEASE_URL` optional, auto-derived from GitHub download URLs when possible
-- `MAC_APP_VERSION` optional
-
-## macOS app notes
-
-- Building and local use do not require publishing through Apple.
-- Clean public distribution usually means Apple Developer Program membership for code signing and notarization.
-- Before any GitHub push, we will stop and review whether all requirements are done.
+MIT. See `LICENSE`.
